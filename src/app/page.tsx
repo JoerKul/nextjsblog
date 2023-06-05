@@ -18,19 +18,20 @@ export default async function Home() {
   const session = await getSession();
 
   return (
-    <div className="flex gap-40 mx-auto">
+    <div className="flex flex-col  mx-auto">
+      <h1>Todo Page</h1>
       <ul className="pl-4">
         {todos.map((todo) => (
           <TodoItem key={todo.id} {...todo} toggleTodo={toggleTodo} />
         ))}
       </ul>
       {session && (
-        <div>
+        <div className="pt-4">
           <Link
             className="border border-slate-300 text-slate-300 px-2 py-1 rounded hover:bg-slate-700 focus-within:bg-slate-700 outline-none"
             href="/new"
           >
-            New
+            Create New
           </Link>
         </div>
       )}

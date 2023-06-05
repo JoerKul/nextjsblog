@@ -13,3 +13,18 @@ export const prisma =
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
+
+export async function getBlogs() {
+  return await prisma.blog.findMany();
+}
+
+export async function getBlogById(id: string) {
+  return await prisma.blog.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      user: true,
+    },
+  });
+}

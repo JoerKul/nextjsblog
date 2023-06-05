@@ -1,5 +1,6 @@
 import { LoginButton, LogoutButton } from "@/app/api/auth/auth";
 import { getSession } from "@/app/api/auth/session";
+import Link from "next/link";
 
 export const Nav = async () => {
   const session = await getSession();
@@ -7,7 +8,9 @@ export const Nav = async () => {
   return (
     <div>
       <header className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl">Todos</h1>
+        <h1 className="text-2xl">
+          <Link href="/">Todos</Link> - <Link href="/blogs">Blogs</Link>
+        </h1>
 
         {!session && <LoginButton />}
         {session && (
