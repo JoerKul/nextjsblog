@@ -17,3 +17,23 @@ model Todo {
   title     String
   complete  Boolean  @default(false)
 }
+
+model Blog {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  content   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String   @unique
+  name      String?
+  password  String
+  blogs     Blog[]
+}
