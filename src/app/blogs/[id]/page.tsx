@@ -1,6 +1,5 @@
 import { getSession } from "@/app/api/auth/session";
-import { getBlogById } from "@/db";
-import axios from "axios";
+import { getBlogById } from "@/app/actions/getBlogById";
 import Link from "next/link";
 
 interface IBlogParams {
@@ -9,8 +8,7 @@ interface IBlogParams {
 
 async function Page({ params }: { params: IBlogParams }) {
   const session = await getSession();
-  const { id } = params;
-  const blog = await getBlogById(id);
+  const blog = await getBlogById(params.id);
   return (
     <div>
       <h1>
@@ -20,7 +18,7 @@ async function Page({ params }: { params: IBlogParams }) {
       {session && session?.user?.id === blog?.user.id && (
         <div className="flex gap-2 justify-start mt-2">
           <Link
-            href={`/blogs/${blog?.id}/edit`}
+            href={`/blogs/edit/${blog?.id}`}
             className="border border-slate-300 text-slate-300 px-2 py-1 rounded hover:bg-slate-700 focus-within:bg-slate-700 outline-none"
           >
             Edit
@@ -46,6 +44,7 @@ async function Page({ params }: { params: IBlogParams }) {
           <p>User: {JSON.stringify(session?.user?.name)}</p>
           <p>EMail: {JSON.stringify(session?.user?.email)}</p>
           <p>User ID: {JSON.stringify(session?.user?.id)}</p>
+          <p>BeaerToken: {JSON.stringify(session?.user?.bearerToken)}</p>
         </div>
       )}
     </div>

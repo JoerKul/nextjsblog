@@ -1,8 +1,23 @@
-import { NextResponse } from "next/server";
+import { verify } from "jsonwebtoken";
+import { getToken } from "next-auth/jwt";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: Request) {
-  console.log("GET request", request);
+export async function GET(request: NextRequest) {
+  const token = await getToken({
+    req: request,
+    raw: true,
+  });
 
+  try {
+    verify(token, process.env.NEXTAUTH_SECRET!);
+  } catch (error: any) {
+    console.error(error + process.env.NEXTAUTH_SECRET!);
+    let json_response = {
+      status: "error",
+      message: "Invalid token",
+    };
+    return new NextResponse(JSON.stringify(json_response), { status: 500 });
+  }
   let json_response = {
     status: "success",
     data: {
@@ -11,6 +26,7 @@ export async function GET(request: Request) {
         name: "J Smith",
         email: "hello@example.com",
       },
+      token,
     },
   };
 

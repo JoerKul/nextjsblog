@@ -1,4 +1,4 @@
-import { getBlogs } from "@/db";
+import { getBlogs } from "@/app/actions/getBlogs";
 import Link from "next/link";
 
 async function Page() {

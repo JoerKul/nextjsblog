@@ -1,9 +1,7 @@
-"use client";
-
-import axios from "axios";
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { registerUser } from "../../actions/registerUser";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 interface InitialStateProps {
   name: string;
@@ -17,36 +15,21 @@ const initialState: InitialStateProps = {
   password: "",
 };
 
+async function onSubmit(formData: FormData) {
+  "use server";
+
+  await registerUser({
+    name: formData.get("name") as string,
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  });
+  revalidatePath("/register");
+  redirect("/");
+}
+
 export default function Page() {
-  const router = useRouter();
-  const [state, setState] = useState(initialState);
-
-  const onSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-
-    await axios
-      .post("/api/user/register", state)
-      .then(() => {
-        router.refresh();
-      })
-      .then(() => {
-        setTimeout(() => {
-          router.push("/");
-        }, 2500);
-      })
-      .catch((err: any) => {
-        console.log("Register Page ", err);
-      })
-      .finally(() => {});
-  };
-
-  function handleChange(event: any) {
-    setState({ ...state, [event.target.name]: event.target.value });
-    console.log(event.target.value);
-  }
-
   return (
-    <form onSubmit={onSubmit} className="text-center">
+    <form action={onSubmit} className="text-center">
       <div className="flex flex-col justify-center h-[450px] w-[350px] mx-auto gap-2">
         <h1 className="text-2xl">Register</h1>
         <p className="text-sm">Create your account</p>
@@ -55,24 +38,21 @@ export default function Page() {
           className="text-black"
           type="text"
           name="name"
-          onChange={handleChange}
-          value={state.name}
+          defaultValue={initialState.name}
           placeholder="Name"
         />
         <input
           className="text-black"
           type="email"
           name="email"
-          onChange={handleChange}
-          value={state.email}
+          defaultValue={initialState.email}
           placeholder="Email"
         />
         <input
           className="text-black"
           type="password"
           name="password"
-          onChange={handleChange}
-          value={state.password}
+          defaultValue={initialState.password}
           placeholder="Password"
         />
 
