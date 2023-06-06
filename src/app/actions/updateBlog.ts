@@ -11,12 +11,9 @@ export async function updateBlog({ blogId, title, content }: BlogProps) {
   try {
     const session = await getSession();
 
-    console.log(session);
-    console.log(blogId);
-
-    // if (!session?.user) {
-    //   throw new Error("You must be logged in to update a blog");
-    // }
+    if (!session?.user) {
+      throw new Error("You must be logged in to update a blog");
+    }
 
     await prisma.blog.update({
       where: {

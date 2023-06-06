@@ -1,8 +1,9 @@
-import { prisma } from "@/db";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { createTodo } from "@/app/actions/createTodo";
+import { revalidatePath } from "next/cache";
 
-async function createTodo(data: FormData) {
+async function createNewTodo(data: FormData) {
   "use server";
 
   const title = data.get("title")?.valueOf();
@@ -10,7 +11,11 @@ async function createTodo(data: FormData) {
     throw new Error("Invalid Title");
   }
 
-  await prisma.todo.create({ data: { title, complete: false } });
+  await createTodo({
+    title,
+    complete: false,
+  });
+  revalidatePath("/todos/new");
   redirect("/");
 }
 
@@ -20,7 +25,7 @@ export default function Page() {
       <header className="flex justify-between items-center mb-4">
         <h1 className="text-2xl">New</h1>
       </header>
-      <form action={createTodo} className="flex gap-2 flex-col">
+      <form action={createNewTodo} className="flex gap-2 flex-col">
         <input
           type="text"
           name="title"

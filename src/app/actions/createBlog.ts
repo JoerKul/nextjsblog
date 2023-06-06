@@ -7,12 +7,6 @@ interface InitialStateProps {
   content: string;
 }
 
-const initialState: InitialStateProps = {
-  userId: "",
-  title: "",
-  content: "",
-};
-
 export async function createBlog({
   userId,
   title,
