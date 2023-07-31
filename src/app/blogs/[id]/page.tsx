@@ -1,21 +1,35 @@
 import { getSession } from "@/app/api/auth/session";
-import { getBlogById } from "@/app/actions/getBlogById";
+//import { useSession } from "next-auth/react";
+import { getBlogByIdAction } from "../../actions/getBlogByIdAction";
 import Link from "next/link";
+import { deleteBlogByIdAction } from "@/app/actions/deleteBlogByIdAction";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
+async function handleSubmit(formData: FormData) {
+  "use server";
+
+  const session = await getSession();
+
+  await deleteBlogByIdAction(formData.get("id") as string);
+  revalidatePath("/blogs");
+  redirect("/blogs");
+}
 interface IBlogParams {
   id: string;
 }
 
 async function Page({ params }: { params: IBlogParams }) {
+  //const { data: session, status } = useSession();
   const session = await getSession();
-  const blog = await getBlogById(params.id);
+  const blog = await getBlogByIdAction(params.id);
   return (
     <div>
       <h1>
         {blog?.title} - {params.id} - {blog?.id}
       </h1>
       <p>{blog?.content}</p>
-      {session && session?.user?.id === blog?.user.id && (
+      {session && session?.user?.id === blog?.userId && (
         <div className="flex gap-2 justify-start mt-2">
           <Link
             href={`/blogs/edit/${blog?.id}`}
@@ -23,15 +37,15 @@ async function Page({ params }: { params: IBlogParams }) {
           >
             Edit
           </Link>
-          <button
-            className="border border-slate-300 text-slate-300 px-2 py-1 rounded hover:bg-slate-700 focus-within:bg-slate-700 outline-none"
-            // onClick={async () => {
-            //   await axios.delete(`/api/blogs/${blog?.id}`);
-            //   window.location.href = "/blogs";
-            // }}
-          >
-            Delete
-          </button>
+          <form action={handleSubmit} method="POST">
+            <input type="hidden" name="id" value={blog?.id} />
+            <button
+              type="submit"
+              className="border border-slate-300 text-slate-300 px-2 py-1 rounded hover:bg-slate-700 focus-within:bg-slate-700 outline-none"
+            >
+              Delete
+            </button>
+          </form>
         </div>
       )}
       <div className="mt-3">

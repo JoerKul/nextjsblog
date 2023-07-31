@@ -1,4 +1,4 @@
-import { createBlog } from "@/app/actions/createBlog";
+import { createBlogAction } from "@/app/actions/createBlogAction";
 import { getSession } from "@/app/api/auth/session";
 import { revalidatePath } from "next/cache";
 import { redirect, useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ async function handleSubmit(formData: FormData) {
 
   const session = await getSession();
 
-  await createBlog({
+  await createBlogAction({
     userId: session?.user?.id as string,
     title: formData.get("title") as string,
     content: formData.get("content") as string,

@@ -1,8 +1,20 @@
-import { getBlogs } from "@/app/actions/getBlogs";
+import { getBlogsAction } from "@/app/actions/getBlogsAction";
 import Link from "next/link";
+import { BlogItem } from "@/components/BlogItem";
+import { deleteBlogByIdAction } from "../actions/deleteBlogByIdAction";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
+async function deleteBlogById(blogId: string) {
+  "use server";
+
+  await deleteBlogByIdAction(blogId);
+  revalidatePath("/blogs");
+  redirect("/blogs");
+}
 
 async function Page() {
-  const blogs = await getBlogs();
+  const blogs = await getBlogsAction();
 
   return (
     <div>

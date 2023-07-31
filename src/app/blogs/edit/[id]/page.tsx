@@ -1,4 +1,4 @@
-import { getBlogById } from "@/app/actions/getBlogById";
+import { getBlogByIdAction } from "@/app/actions/getBlogByIdAction";
 import { updateBlog } from "@/app/actions/updateBlog";
 import { getSession } from "@/app/api/auth/session";
 import { revalidatePath } from "next/cache";
@@ -24,7 +24,7 @@ interface IBlogParams {
 }
 
 async function Page({ params }: { params: IBlogParams }) {
-  const blog = await getBlogById(params.id);
+  const blog = await getBlogByIdAction(params.id);
 
   return (
     <div className="flex flex-col justify-center mx-auto gap-2">

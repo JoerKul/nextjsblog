@@ -1,5 +1,6 @@
-import { prisma } from "@/db";
+"use server";
 import { getSession } from "../api/auth/session";
+import { createBlog } from "../lib/blog";
 
 interface InitialStateProps {
   userId: string;
@@ -7,7 +8,7 @@ interface InitialStateProps {
   content: string;
 }
 
-export async function createBlog({
+export async function createBlogAction({
   userId,
   title,
   content,
@@ -19,16 +20,11 @@ export async function createBlog({
       throw new Error("You must be logged in to create a blog");
     }
 
-    await prisma.blog.create({
-      data: {
-        userId: userId,
-        title: title,
-        content: content,
-      },
-    });
+    await createBlog(userId, title, content);
   } catch (error: any) {
-    throw new Error(
-      "Error creating blog maybe you must be logged in to create a blog"
-    );
+    console.log(error);
+    // throw new Error(
+    //   "Error creating blog maybe you must be logged in to create a blog"
+    // );
   }
 }
